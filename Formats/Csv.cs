@@ -9,13 +9,11 @@ namespace Accounts_Normaliser.Formats
     {
         public static Model.Account Read(string file, IConfigurationSection config)
         {
-            var account = new Model.Account(null, null, Model.AccountType.Unknown);
+            var account = new Model.Account(null, null, Model.AccountType.Unknown, null);
 
             var csv = new CsvReader(new StreamReader(File.OpenRead(file), true));
             while (csv.Read())
             {
-                Console.WriteLine($"Row {csv.Row}: {string.Join(",", csv.CurrentRecord)}");
-
                 if (csv.GetField(0) == csv.FieldHeaders[0])
                     continue;
 
@@ -24,7 +22,8 @@ namespace Accounts_Normaliser.Formats
                     account = new Model.Account(
                         GetValue(config["BankID"], csv),
                         GetValue(config["AccountID"], csv),
-                        (Model.AccountType)Enum.Parse(typeof(Model.AccountType), GetValue(config["AccountType"], csv))
+                        (Model.AccountType)Enum.Parse(typeof(Model.AccountType), GetValue(config["AccountType"], csv)),
+                        GetValue(config["Currency"], csv)
                     );
                 }
 

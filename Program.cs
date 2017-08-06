@@ -52,11 +52,13 @@ namespace Accounts_Normaliser
                 if (!Directory.Exists(account["Target"]))
                     throw new DirectoryNotFoundException($"Target directory {account["Target"]} does not exist");
 
-                foreach (var file in Directory.GetFiles(account["Source"]))
+                foreach (var sourceFile in Directory.GetFiles(account["Source"]))
                 {
-                    Console.WriteLine($"  Processing {Path.GetFileName(file)}...");
-                    var data = ReadData(file, account.GetSection("SourceFormat"));
-                    WriteData(data, Path.Combine(account["Target"], Path.GetFileNameWithoutExtension(file)), account.GetSection("TargetFormat"));
+                    var targetFile = Path.Combine(account["Target"], Path.GetFileNameWithoutExtension(sourceFile) + "." + account.GetSection("TargetFormat")["Type"]);
+                    Console.WriteLine($"  Processing {Path.GetFileName(sourceFile)} into {Path.GetFileName(targetFile)}...");
+
+                    var data = ReadData(sourceFile, account.GetSection("SourceFormat"));
+                    WriteData(data, targetFile, account.GetSection("TargetFormat"));
                 }
             }
             catch (Exception error)
@@ -82,6 +84,9 @@ namespace Accounts_Normaliser
         {
             switch (config["Type"])
             {
+                case "ofx":
+                    Formats.Ofx.Write(account, file, config);
+                    break;
                 default:
                     throw new NotImplementedException($"Target format {config["Type"]} is not supported");
             }

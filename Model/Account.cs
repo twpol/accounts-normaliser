@@ -8,13 +8,15 @@ namespace Accounts_Normaliser.Model
         public string BankID { get; }
         public string AccountID { get; }
         public AccountType AccountType { get; }
+        public string Currency { get; }
         public List<Transaction> Transactions { get; }
 
-        public Account(string bankID, string accountID, AccountType accountType)
+        public Account(string bankID, string accountID, AccountType accountType, string currency)
         {
             BankID = bankID;
             AccountID = accountID;
             AccountType = accountType;
+            Currency = currency;
             Transactions = new List<Transaction>();
         }
     }
