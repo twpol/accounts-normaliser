@@ -1,8 +1,7 @@
-﻿using System;
-using CLP = CommandLineParser;
+﻿using CLP = CommandLineParser;
 using Microsoft.Extensions.Configuration;
+using System;
 using System.IO;
-using Accounts_Normaliser.Model;
 
 namespace Accounts_Normaliser
 {
@@ -52,9 +51,12 @@ namespace Accounts_Normaliser
                 if (!Directory.Exists(account["Target"]))
                     throw new DirectoryNotFoundException($"Target directory {account["Target"]} does not exist");
 
-                var data = ReadData(account["Source"], account.GetSection("SourceFormat"));
-
-                WriteData(data, account["Target"], account.GetSection("TargetFormat"));
+                foreach (var file in Directory.GetFiles(account["Source"]))
+                {
+                    Console.WriteLine($"  Processing {Path.GetFileName(file)}...");
+                    var data = ReadData(file, account.GetSection("SourceFormat"));
+                    WriteData(data, Path.Combine(account["Target"], Path.GetFileNameWithoutExtension(file)), account.GetSection("TargetFormat"));
+                }
             } catch (Exception error) {
                 Console.WriteLine($"Failed with error: {error}");
                 return;
@@ -62,7 +64,7 @@ namespace Accounts_Normaliser
             Console.WriteLine("Done");
         }
 
-        static Account ReadData(string file, IConfigurationSection config)
+        static Model.Account ReadData(string file, IConfigurationSection config)
         {
             switch (config["Type"])
             {
@@ -71,7 +73,7 @@ namespace Accounts_Normaliser
             }
         }
 
-        static void WriteData(Account account, string file, IConfigurationSection config)
+        static void WriteData(Model.Account account, string file, IConfigurationSection config)
         {
             switch (config["Type"])
             {
