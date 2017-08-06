@@ -77,6 +77,8 @@ namespace Accounts_Normaliser
             {
                 case "csv":
                     return Formats.Csv.Read(file, config);
+                case "qif":
+                    return Formats.Qif.Read(file, config);
                 default:
                     throw new NotImplementedException($"Source format {config["Type"]} is not supported");
             }
