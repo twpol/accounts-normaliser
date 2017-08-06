@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
@@ -7,6 +8,14 @@ namespace Accounts_Normaliser.Formats
 {
     static class Ofx
     {
+        static Dictionary<Model.AccountType, string> OfxAccountTypes = new Dictionary<Model.AccountType, string> {
+            { Model.AccountType.Unknown, "UNKNOWN" },
+            { Model.AccountType.Checking, "CHECKING" },
+            { Model.AccountType.Savings, "SAVINGS" },
+            { Model.AccountType.MoneyMarket, "MONEYMRKT" },
+            { Model.AccountType.CreditLine, "CREDITLINE" },
+        };
+
         public static void Write(Model.Account account, string file, IConfigurationSection config)
         {
             var output = new XDocument(
@@ -19,7 +28,7 @@ namespace Accounts_Normaliser.Formats
                                 new XElement("BANKACCTFROM",
                                     new XElement("BANKID", account.BankID),
                                     new XElement("ACCTID", account.AccountID),
-                                    new XElement("ACCTTYPE", account.AccountType)
+                                    new XElement("ACCTTYPE", OfxAccountTypes[account.AccountType])
                                 ),
                                 new XElement("BANKTRANLIST",
                                     from transaction in account.Transactions
