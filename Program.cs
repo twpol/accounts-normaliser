@@ -37,7 +37,14 @@ namespace Accounts_Normaliser
 
         static void Main(IConfigurationRoot config)
         {
-            Console.WriteLine("Hello World!");
+            foreach (var account in config.GetSection("Accounts").GetChildren())
+                ProcessAccount(account);
+        }
+
+        private static void ProcessAccount(IConfigurationSection account)
+        {
+            Console.WriteLine($"Processing {account.Key}...");
+            Console.WriteLine($"Done");
         }
     }
 }
