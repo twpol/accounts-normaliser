@@ -36,7 +36,10 @@ namespace Accounts_Normaliser.Formats
                 )
             );
 
-            output.Save(File.OpenWrite(file));
+            using (var stream = File.OpenWrite(file))
+            {
+                output.Save(stream);
+            }
         }
     }
 }

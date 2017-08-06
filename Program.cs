@@ -59,6 +59,8 @@ namespace Accounts_Normaliser
 
                     var data = ReadData(sourceFile, account.GetSection("SourceFormat"));
                     WriteData(data, targetFile, account.GetSection("TargetFormat"));
+
+                    File.SetLastWriteTimeUtc(targetFile, File.GetLastWriteTimeUtc(sourceFile));
                 }
             }
             catch (Exception error)

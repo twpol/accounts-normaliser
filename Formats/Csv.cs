@@ -11,7 +11,12 @@ namespace Accounts_Normaliser.Formats
         {
             var account = new Model.Account(null, null, Model.AccountType.Unknown, null);
 
-            var csv = new CsvReader(new StreamReader(File.OpenRead(file), true));
+            using (var stream = File.OpenRead(file))
+            {
+                using (var reader = new StreamReader(stream, true))
+                {
+                    using (var csv = new CsvReader(reader))
+                    {
             while (csv.Read())
             {
                 if (csv.GetField(0) == csv.FieldHeaders[0])
@@ -39,6 +44,9 @@ namespace Accounts_Normaliser.Formats
                     GetValue(config["Description"], csv),
                     GetValue(config["Memo"], csv)
                 ));
+            }
+                    }
+                }
             }
 
             return account;
