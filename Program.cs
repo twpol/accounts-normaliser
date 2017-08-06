@@ -44,7 +44,8 @@ namespace Accounts_Normaliser
         static void ProcessAccount(IConfigurationSection account)
         {
             Console.WriteLine($"Processing {account.Key}...");
-            try {
+            try
+            {
                 if (!Directory.Exists(account["Source"]))
                     throw new DirectoryNotFoundException($"Source directory {account["Source"]} does not exist");
 
@@ -57,7 +58,9 @@ namespace Accounts_Normaliser
                     var data = ReadData(file, account.GetSection("SourceFormat"));
                     WriteData(data, Path.Combine(account["Target"], Path.GetFileNameWithoutExtension(file)), account.GetSection("TargetFormat"));
                 }
-            } catch (Exception error) {
+            }
+            catch (Exception error)
+            {
                 Console.WriteLine($"Failed with error: {error}");
                 return;
             }
@@ -68,6 +71,8 @@ namespace Accounts_Normaliser
         {
             switch (config["Type"])
             {
+                case "csv":
+                    return Formats.Csv.Read(file, config);
                 default:
                     throw new NotImplementedException($"Source format {config["Type"]} is not supported");
             }

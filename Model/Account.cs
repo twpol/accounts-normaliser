@@ -21,6 +21,7 @@ namespace Accounts_Normaliser.Model
 
     enum AccountType
     {
+        Unknown,
         Checking,
         Savings,
         MoneyMarket,
