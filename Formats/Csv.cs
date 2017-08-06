@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Text;
 using CsvHelper;
 using Microsoft.Extensions.Configuration;
 
@@ -64,17 +65,19 @@ namespace Accounts_Normaliser.Formats
             return configValue;
         }
 
-        static char[] NumericCharacters = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.', ',' };
+        static string NumericCharacters = "-0123456789.,";
 
         static decimal ParseDecimal(string value)
         {
-            while (value.Length > 0 && !NumericCharacters.Contains(value[0]))
-                value = value.Substring(1);
+            var buffer = new StringBuilder(value.Length);
+            for (var i = 0; i < value.Length; i++)
+                if (NumericCharacters.IndexOf(value[i]) >= 0)
+                    buffer.Append(value[i]);
 
-            if (value == "")
+            if (value.Length == 0)
                 return 0;
 
-            return decimal.Parse(value);
+            return decimal.Parse(buffer.ToString());
         }
     }
 }
