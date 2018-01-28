@@ -52,7 +52,7 @@ namespace Accounts_Normaliser
                 if (!Directory.Exists(account["Target"]))
                     throw new DirectoryNotFoundException($"Target directory {account["Target"]} does not exist");
 
-                foreach (var sourceFile in Directory.GetFiles(account["Source"]))
+                foreach (var sourceFile in Directory.GetFiles(account["Source"], $"*.{account.GetSection("SourceFormat")["Type"]}"))
                 {
                     var targetFile = Path.Combine(account["Target"], Path.GetFileNameWithoutExtension(sourceFile) + "." + account.GetSection("TargetFormat")["Type"]);
                     Console.WriteLine($"  Processing {Path.GetFileName(sourceFile)} into {Path.GetFileName(targetFile)}...");
