@@ -19,11 +19,10 @@ namespace Accounts_Normaliser.Formats
                 {
                     using (var csv = new CsvReader(reader))
                     {
+                        csv.Read();
+                        csv.ReadHeader();
                         while (csv.Read())
                         {
-                            if (csv.GetField(0) == csv.FieldHeaders[0])
-                                continue;
-
                             if (account.BankID == null & account.AccountID == null)
                             {
                                 account = new Model.Account(
@@ -38,7 +37,7 @@ namespace Accounts_Normaliser.Formats
                             var withdrawal = ParseDecimal(GetValue(config["Withdrawal"], csv));
 
                             if (deposit != 0 && withdrawal != 0)
-                                throw new InvalidDataException($"CSV line {csv.Row} contains non-zero deposit {deposit} and non-zero withdrawal {withdrawal} values");
+                                throw new InvalidDataException($"CSV line {csv.Context.Row} contains non-zero deposit {deposit} and non-zero withdrawal {withdrawal} values");
 
                             account.Transactions.Add(new Model.Transaction(
                                 DateTimeOffset.Parse(GetValue(config["Date"], csv)),
