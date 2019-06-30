@@ -11,7 +11,7 @@ namespace Accounts_Normaliser
         {
             var config = new CLP.Arguments.FileArgument('c', "config")
             {
-                DefaultValue = new FileInfo("config.json")
+                ForcedDefaultValue = new FileInfo("config.json")
             };
 
             var commandLineParser = new CLP.CommandLineParser()
