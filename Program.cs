@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using System;
 using System.IO;
+using System.Linq;
 
 namespace Accounts_Normaliser
 {
@@ -60,7 +61,11 @@ namespace Accounts_Normaliser
                     var data = ReadData(sourceFile, account.GetSection("SourceFormat"));
                     WriteData(data, targetFile, account.GetSection("TargetFormat"));
 
-                    File.SetLastWriteTimeUtc(targetFile, File.GetLastWriteTimeUtc(sourceFile));
+                    if (data.Transactions.Count > 0) {
+                        File.SetLastWriteTimeUtc(targetFile, data.Transactions.Max(t => t.DatePosted).UtcDateTime);
+                    } else {
+                        File.SetLastWriteTimeUtc(targetFile, new DateTimeOffset(2000, 0, 1, 0, 0, 0, TimeSpan.Zero).UtcDateTime);
+                    }
                 }
             }
             catch (Exception error)
