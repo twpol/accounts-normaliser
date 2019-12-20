@@ -19,6 +19,7 @@ namespace Accounts_Normaliser.Formats
                 {
                     using (var csv = new CsvReader(reader))
                     {
+                        csv.Configuration.BadDataFound = null;
                         csv.Read();
                         csv.ReadHeader();
                         while (csv.Read())
