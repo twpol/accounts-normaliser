@@ -28,6 +28,11 @@ dotnet run [-c|--config]
       * `Currency` (string, template, optional) currency name (e.g. `GBP`)
       * `Deposit` (string, template, optional) amount added to account
       * `Withdrawal` (string, template, optional) amount removed from account
+      * `Amount` (string, template, optional) amount added to or removed from account (must also set `AmountType`, `AmountTypeDeposit`, `AmountTypeWithdrawal`)
+      * `AmountType` (string, template, optional) column containing value indicating add/remove
+      * `AmountTypeDeposit` (string, optional) value used in `AmountType` column to indicate `Amount` is added to account
+      * `AmountTypeWithdrawal` (string, optional) value used in `AmountType` column to indicate `Amount` is removed from account
+      * `AmountTypeDefault` (string, optional) value used for `AmountType` if column is missing (only useful if mixed formats)
       * `Date` (string, template, optional) date of transaction (dates are parsed by [.NET DateTimeOffset.Parse](https://docs.microsoft.com/en-us/dotnet/api/system.datetimeoffset.parse))
       * `Description` (string, template, optional) description for transaction
       * `Memo` (string, template, optional)
@@ -63,7 +68,10 @@ All the options for `SourceFormat` (except `Type`) support the following templat
                 "Currency": "$column$currency",
                 "Date": "$column$date",
                 "Description": "$column$description",
-                "Withdrawal": "$column$amount"
+                "Amount": "$column$amount",
+                "AmountType": "$column$debitCreditCode",
+                "AmountTypeDeposit": "Credit",
+                "AmountTypeWithdrawal": "Debit"
             },
             "Target": "C:\\Accounting\\Normalised",
             "TargetFormat": {
