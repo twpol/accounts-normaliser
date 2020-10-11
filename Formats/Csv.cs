@@ -20,6 +20,7 @@ namespace Accounts_Normaliser.Formats
                     using (var csv = new CsvReader(reader))
                     {
                         csv.Configuration.BadDataFound = null;
+                        csv.Configuration.MissingFieldFound = null;
                         csv.Read();
                         csv.ReadHeader();
                         while (csv.Read())
@@ -36,13 +37,27 @@ namespace Accounts_Normaliser.Formats
 
                             var deposit = ParseDecimal(GetValue(config["Deposit"], csv));
                             var withdrawal = ParseDecimal(GetValue(config["Withdrawal"], csv));
+                            var amount = ParseDecimal(GetValue(config["Amount"], csv));
+                            var amountType = GetValue(config["AmountType"], csv) ?? "";
 
-                            if (deposit != 0 && withdrawal != 0)
-                                throw new InvalidDataException($"CSV line {csv.Context.Row} contains non-zero deposit {deposit} and non-zero withdrawal {withdrawal} values");
+                            if (amountType == "") amountType = config["AmountTypeDefault"] ?? "";
+
+                            if (
+                                (deposit != 0 && (withdrawal != 0 || amount != 0 || amountType != "")) ||
+                                (withdrawal != 0 && (amount != 0 || amountType != "")) ||
+                                (amount != 0 && amountType != config["AmountTypeDeposit"] && amountType != config["AmountTypeWithdrawal"])
+                            ) throw new InvalidDataException($"CSV line {csv.Context.Row} contains mixture of deposit {deposit}, withdrawl {withdrawal}, amount {amount}, amount type {amountType} values");
+
+                            if (deposit != 0)
+                                amount = deposit;
+                            else if (withdrawal != 0)
+                                amount = -withdrawal;
+                            else if (amount != 0 && amountType == config["AmountTypeWithdrawal"])
+                                amount *= -1;
 
                             account.Transactions.Add(new Model.Transaction(
                                 DateTimeOffset.Parse(GetValue(config["Date"], csv)),
-                                deposit - withdrawal,
+                                amount,
                                 GetValue(config["Description"], csv),
                                 GetValue(config["Memo"], csv)
                             ));
