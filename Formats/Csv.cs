@@ -1,8 +1,10 @@
 using System;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
 using CsvHelper;
+using CsvHelper.Configuration;
 using Microsoft.Extensions.Configuration;
 
 namespace Accounts_Normaliser.Formats
@@ -13,14 +15,18 @@ namespace Accounts_Normaliser.Formats
         {
             var account = new Model.Account(null, null, Model.AccountType.Unknown, null);
 
+            var csvConfig = new CsvConfiguration(CultureInfo.InvariantCulture)
+            {
+                BadDataFound = null,
+                MissingFieldFound = null,
+            };
+
             using (var stream = File.OpenRead(file))
             {
                 using (var reader = new StreamReader(stream, true))
                 {
-                    using (var csv = new CsvReader(reader))
+                    using (var csv = new CsvReader(reader, csvConfig))
                     {
-                        csv.Configuration.BadDataFound = null;
-                        csv.Configuration.MissingFieldFound = null;
                         csv.Read();
                         csv.ReadHeader();
                         while (csv.Read())
@@ -46,7 +52,7 @@ namespace Accounts_Normaliser.Formats
                                 (deposit != 0 && (withdrawal != 0 || amount != 0 || amountType != "")) ||
                                 (withdrawal != 0 && (amount != 0 || amountType != "")) ||
                                 (amount != 0 && amountType != config["AmountTypeDeposit"] && amountType != config["AmountTypeWithdrawal"])
-                            ) throw new InvalidDataException($"CSV line {csv.Context.Row} contains mixture of deposit {deposit}, withdrawl {withdrawal}, amount {amount}, amount type {amountType} values");
+                            ) throw new InvalidDataException($"CSV line {csv.Context.Parser.Row} contains mixture of deposit {deposit}, withdrawl {withdrawal}, amount {amount}, amount type {amountType} values");
 
                             if (deposit != 0)
                                 amount = deposit;
