@@ -20,6 +20,7 @@ dotnet run [-c|--config]
   * `<NAME>` (object) name is unimportant but can be used to identify different accounts or input formats to be processed
     * `Source` (string) full path to read input files
     * `SourcePrefix` (string, optional) file name prefix to limit processing to only some files in `Source`
+    * `SourceSuffix` (string, optional) file name suffix to limit processing to only some files in `Source`
     * `SourceFormat` (object)
       * `Type` (string) file extension for input files (possible values: `csv`, `qif`)
       * `BankID` (string, template, optional) bank identification (e.g. sort code)
@@ -37,6 +38,8 @@ dotnet run [-c|--config]
       * `Description` (string, template, optional) description for transaction
       * `Memo` (string, template, optional)
     * `Target` (string) full path to write output files
+    * `TargetPrefix` (string, optional) file name prefix to add to output files
+    * `TargetSuffix` (string, optional) file name suffix to add to output files
     * `TargetFormat` (object)
       * `Type` (string) file extension for output files (possible values: `ofx`)
 
