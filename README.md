@@ -1,6 +1,6 @@
 # Accounts Normaliser
 
-Normalises downloadable transactions from CSV and QIF into OFX.
+Command-line tool for normalising downloaded transactions from CSV and QIF into OFX.
 
 ## Synopsis
 
